@@ -1,0 +1,22 @@
+---
+  - name: mount external drives
+    mount:
+      name="{{ mount_path }}"
+      src="LABEL={{ data_drive_label}}"
+      fstype=ext4 
+      opts="defaults,noatime"
+      state=mounted
+
+  - name: install samba
+    apt: pkg={{ item }} state=installed
+    with_items:
+      - samba
+      - samba-common-bin
+      - libpam-smbpass
+    tags:
+      - firstinstall
+
+  - name: setup smb.conf
+    template: src=smb.conf.j2 dest=/etc/samba/smb.conf backup=yes
+    notify:
+      - restart samba

@@ -1,0 +1,11 @@
+---
+- hosts: homeservers
+  sudo: yes
+  vars_files:
+    - vars.yml
+
+  roles:
+    - common
+    - nas
+    - { role: torrent, tags: [ 'torrent' ] }
+

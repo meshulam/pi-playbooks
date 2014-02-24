@@ -1,0 +1,38 @@
+---
+- name: install deluge
+  apt: pkg={{ item }} state=installed
+  with_items:
+    - deluged
+    - deluge-console
+  tags:
+    - firstinstall
+
+- name: create deluge user
+  user: name=deluge system=yes state=present
+
+- name: create deluge init script
+  copy: src=deluge-init dest=/etc/init.d/deluge-daemon
+        owner=root group=root mode=0755
+
+- name: create deluge config
+  template: src=deluge-defaults.j2 dest=/etc/default/deluge-daemon backup=yes
+        owner=root group=root
+
+- name: start deluged
+  service: name=deluge-daemon state=restarted
+
+- name: wait for deluge to create config files
+  wait_for: path="{{ torrent_config_path }}/auth" state=present timeout=10
+
+- name: add remote auth
+  lineinfile:
+    create=no
+    dest="{{ torrent_config_path }}/auth"
+    line="{{ torrent_remote_user }}:{{ torrent_remote_pass }}:10"
+
+- name: enable remote login
+  sudo_user: "{{ torrent_user }}"
+  command: deluge-console -c {{ torrent_config_path }} "config -s allow_remote True"
+
+- name: restart deluged
+  service: name=deluge-daemon state=restarted

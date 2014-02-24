@@ -1,0 +1,7 @@
+# Configuration for /etc/init.d/deluge-daemon
+
+# The init.d script will only run if this variable non-empty.
+DELUGED_USER="{{ torrent_user }}"
+
+EXTRA_ARGS="-c {{ torrent_config_path }}"
+

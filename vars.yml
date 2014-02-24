@@ -1,0 +1,11 @@
+---
+hostname_name: TODO
+hostname_domain: TODO
+data_drive_label: TODO
+mount_path: /mnt/data
+ansible_ssh_user: pi
+
+torrent_remote_user: matt
+torrent_remote_pass: insecurepassw0rd
+torrent_user: deluge
+torrent_config_path: "/home/{{ torrent_user }}/deluge-config"
